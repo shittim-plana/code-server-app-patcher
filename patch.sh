@@ -53,7 +53,7 @@ sed -i "s|applicationId = \"com.codeserver.app\"|applicationId = \"$APP_ID\"|" \
     "$BUILD_DIR/app/build.gradle.kts"
 
 echo "[patch] intent-filter host → $DOMAIN"
-sed -i "s|android:host=\"257mari.vscode.artblnd.net\"|android:host=\"$DOMAIN\"|" \
+sed -i "s|android:host=\"__PATCH_DOMAIN__\"|android:host=\"$DOMAIN\"|" \
     "$BUILD_DIR/app/src/main/AndroidManifest.xml"
 
 echo "[patch] app_name → $APP_NAME"
@@ -83,13 +83,26 @@ fi
 
 OUT_NAME="code-server-${DOMAIN_SLUG}.apk"
 
-if [ "$SIGN" = true ] && [ -f "$BUILD_DIR/release.keystore" ]; then
+KEYSTORE="$SCRIPT_DIR/signing.keystore"
+
+if [ "$SIGN" = true ]; then
+    if [ ! -f "$KEYSTORE" ]; then
+        echo "[patch] 서명 키가 없습니다. 자동 생성 중..."
+        keytool -genkeypair \
+            -keystore "$KEYSTORE" \
+            -alias app \
+            -keyalg RSA -keysize 2048 \
+            -validity 10000 \
+            -storepass android -keypass android \
+            -dname "CN=CodeServer,O=User" 2>/dev/null
+        echo "[patch] 키 생성 완료: $KEYSTORE"
+    fi
     echo "[patch] 서명 중..."
     $ANDROID_HOME/build-tools/35.0.0/apksigner sign \
-        --ks "$BUILD_DIR/release.keystore" \
-        --ks-key-alias codeserver \
-        --ks-pass pass:codeserver123 \
-        --key-pass pass:codeserver123 \
+        --ks "$KEYSTORE" \
+        --ks-key-alias app \
+        --ks-pass pass:android \
+        --key-pass pass:android \
         --out "$SCRIPT_DIR/$OUT_NAME" \
         "$APK_PATH"
     echo "[patch] 완료: $SCRIPT_DIR/$OUT_NAME ($(du -h "$SCRIPT_DIR/$OUT_NAME" | cut -f1))"

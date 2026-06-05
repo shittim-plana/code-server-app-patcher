@@ -1,3 +1,5 @@
 build/
 *.apk
 *.idsig
+*.keystore
+.claude
