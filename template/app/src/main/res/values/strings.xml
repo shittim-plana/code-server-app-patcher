@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Code Server</string>
+    <string name="notification_channel_name">연결 유지</string>
+    <string name="notification_channel_description">Code Server 연결을 백그라운드에서 유지합니다</string>
+    <string name="notification_title">Code Server 연결 중</string>
+    <string name="notification_text_connected">%d개 탭 활성</string>
+    <string name="notification_text_reconnecting">재연결 중…</string>
+    <string name="add_tab">탭 추가</string>
+    <string name="url_hint">Code Server URL 입력</string>
+    <string name="confirm_close_tab">이 탭을 닫으시겠습니까?</string>
+    <string name="back_press_confirm">한 번 더 누르면 종료됩니다</string>
+</resources>
